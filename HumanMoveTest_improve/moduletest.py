@@ -1,36 +1,45 @@
-import main
 import unittest
+from main import *
+
 class TournamentTest(unittest.TestCase):
-    def setUpClass(self, *all_results):
-        self.all_result = {}
-        self.all_result.update(all_results)
-    def setUp(self, *participants):
-        self.participants = list(participants)
-    def tearDownClass(self):
-        for key, value in self.all_results.items():
-            print("{0}: {1}".format(key, value))
 
-    def teststartYN(self):
-        tour = main.Tournament(90,
-                               main.Runner('Усэйн', 10),
-                               main.Runner('Ник', 3))
-        results = tour.start()
-        self.assertTrue(results.__getitem__(list(results)[-1])=='Ник', 'Неверно')
-    def teststartAN(self):
-        tour = main.Tournament(90,
-                               main.Runner('Андрей', 9),
-                               main.Runner('Ник', 3))
-        results = tour.start()
-        self.assertTrue(results.__getitem__(list(results)[-1])=='Ник', 'Неверно')
+    @classmethod
+    def setUpClass(cls):
+        cls.all_results = {}
 
-    def teststartYAN(self):
-        tour = main.Tournament(90, main.Runner('Усэйн', 10),
-                               main.Runner('Андрей', 9),
-                               main.Runner('Ник', 3))
-        results = tour.start()
-        self.assertTrue(results.__getitem__(list(results)[-1])=='Ник', 'Неверно')
+    def setUp(self):
+        self.usain = Runner("Усэйн", speed=5)
+        self.andrey = Runner("Андрей", speed=9)
+        self.nick = Runner("Ник", speed=3)
 
-if __name__ == "__main__":
-    tournament_test_object = TournamentTest()
-    tournament_test_object.setUpClass()
-    unittest.main()
+    @classmethod
+    def tearDownClass(cls):
+        for result in cls.all_results.values():
+            print(result)
+
+    def test_usain_and_nick(self):
+        tournament = Tournament(90, self.usain, self.nick)
+        result = tournament.start()
+        # Сохраняем имена бегунов
+        formatted_result = {place: runner.name for place, runner in result.items()}
+        TournamentTest.all_results['test_usain_and_nick'] = formatted_result
+        self.assertTrue(result[max(result.keys())].name == "Ник")
+
+    def test_andrey_and_nick(self):
+        tournament = Tournament(90, self.andrey, self.nick)
+        result = tournament.start()
+        # Сохраняем имена бегунов
+        formatted_result = {place: runner.name for place, runner in result.items()}
+        TournamentTest.all_results['test_andrey_and_nick'] = formatted_result
+        self.assertTrue(result[max(result.keys())].name == "Ник")
+
+    def test_usain_andrey_and_nick(self):
+        tournament = Tournament(90, self.usain, self.andrey, self.nick)
+        result = tournament.start()
+        # Сохраняем имена бегунов
+        formatted_result = {place: runner.name for place, runner in result.items()}
+        TournamentTest.all_results['test_usain_andrey_and_nick'] = formatted_result
+        self.assertTrue(result[max(result.keys())].name == "Ник")
+
+if __name__ == '__main__':
+    unittest.main(argv=[''], verbosity=2, exit=False)
